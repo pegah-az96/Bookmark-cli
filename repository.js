@@ -57,8 +57,4 @@ var searchItem =(tag) =>{
             })
 
 }
-//insert({url : "pegah" ,description : "best search " , tags : ["sin" , "peg"]})
-// insert({url : "siiin" ,description : "best search " , tags : ["sin" , "peg"]})
-// deleteItem(1590565718992);
-// getData();
-searchItem("peg")
+
