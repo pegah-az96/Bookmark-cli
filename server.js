@@ -58,8 +58,6 @@ var searchItem =(tag) =>{
 
 export { getData, deleteItem, insert ,searchItem}
 
-// insert({link :"test" ,description :"asr" ,tags :["man","to"]})
-// searchItem("man")
-// searchItem(['man'])
+
 
 
