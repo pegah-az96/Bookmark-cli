@@ -1,16 +1,12 @@
 import levelup from 'levelup'
 import leveldown from 'leveldown'
+import chalk from 'chalk'
+import{db} from './database.js'
 import ramda from 'ramda'
 
-var db = levelup(leveldown('./mydb1'),function (error) {
-    if (error){
-        console.log(error)
-    }
-})
+var foundItem =[]
 const insert =(input) =>{
 var id =new Date().getTime()
-    // var clenedInput =JSON.stringify(input).replace(/\\/g, "")
-    // console.log(clenedInput)
    var inserted = db.put(id, JSON.stringify(input))
         .then(console.log("inserted"))
         .catch((error)=>console.log(error))
@@ -24,13 +20,13 @@ db.createReadStream()
         console.log(data.key.toString(), '=', data.value.toString().replace(/\\/g, ""))
     })
     .on('error', function (err) {
-        console.log('Oh my!', err)
+        console.log(chalk.red('Oh Error!'), err)
     })
     .on('close', function () {
-        console.log('Stream closed')
+        console.log(chalk.red('Stream closed'))
     })
     .on('end', function () {
-        console.log('Stream ended')
+        console.log(chalk.green('Stream ended'))
     })
 }
 var deleteItem =(id) =>{
@@ -39,25 +35,25 @@ var deleteItem =(id) =>{
         .catch((error)=>console.log(error))
         Promise.resolve(s)
 }
-var searchItem =(tag) =>{
-    var foundItem =[]
-    db.createValueStream()
+const searchItem =(tag) =>{
+    db.createReadStream()
         .on('data', function (data) {
-            console.log( data.toString().replace(/\\/g, ""))
-            console.log(foundItem)
-            // var jsonObject =JSON.parse(data.toString().replace(/\\/g, ""))
-            // if (ramda.includes(tag, jsonObject.tags)){
-            //         foundItem.push(data.toString())
-            //     console.log(foundItem,"kelf")
-            //     }
+            var stringInput = data.value.toString().replace(/\\/g, "")
+            var jsonObject =JSON.parse(stringInput)
+            if (ramda.includes(tag, jsonObject.tags)){
+                 foundItem.push(jsonObject)
+                }
         })
-        // .on('end', function () {
-        //     return foundItem
-        //     })
+        .on('error', function (err) {
+            console.log('Oh my!', err)
+        })
+        .on('close', function () {
+            console.log('Found Items :')
+            console.log(foundItem)
+        })
+        .on('end', function () {
+            console.log("search id ended")
+            })
 }
-
-export { getData, deleteItem, insert ,searchItem}
-
-
-
+export { getData, deleteItem,searchItem , insert}
 
