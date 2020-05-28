@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import{db} from './database.js'
 import ramda from 'ramda'
 
-var foundItem =[]
+
 //insert data
 const insert =(input) =>{
 var id =new Date().getTime()
@@ -37,6 +37,7 @@ var deleteItem =(id) =>{
 }
 //search data
 const searchItem =(tag) =>{
+    var foundItem =[]
     db.createReadStream()
         .on('data', function (data) {
             var stringInput = data.value.toString().replace(/\\/g, "")
