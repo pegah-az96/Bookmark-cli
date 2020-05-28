@@ -1,10 +1,9 @@
-import levelup from 'levelup'
-import leveldown from 'leveldown'
 import chalk from 'chalk'
 import{db} from './database.js'
 import ramda from 'ramda'
 
 var foundItem =[]
+//insert data
 const insert =(input) =>{
 var id =new Date().getTime()
    var inserted = db.put(id, JSON.stringify(input))
@@ -12,7 +11,7 @@ var id =new Date().getTime()
         .catch((error)=>console.log(error))
    Promise.resolve(inserted)
 }
-//getdata
+//read data
 const getData =()=>{
 db.createReadStream()
     .on('data', function (data) {
@@ -29,12 +28,14 @@ db.createReadStream()
         console.log(chalk.green('Stream ended'))
     })
 }
+//delete data
 var deleteItem =(id) =>{
    var s =db.del(id)
         .then(console.log("data deleted"))
         .catch((error)=>console.log(error))
         Promise.resolve(s)
 }
+//search data
 const searchItem =(tag) =>{
     db.createReadStream()
         .on('data', function (data) {
@@ -48,11 +49,11 @@ const searchItem =(tag) =>{
             console.log('Oh my!', err)
         })
         .on('close', function () {
-            console.log('Found Items :')
+            console.log(chalk.green('Found Items :'))
             console.log(foundItem)
         })
         .on('end', function () {
-            console.log("search id ended")
+            console.log(chalk.blue("search id ended"))
             })
 }
 export { getData, deleteItem,searchItem , insert}
