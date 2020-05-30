@@ -1,13 +1,12 @@
 #!/usr/bin/env node
-import readline from "readline";
+"use strict"
 import chalk from 'chalk'
 import {getData, deleteItem, insert,searchItem} from "./server.js"
 import validator from "is-my-json-valid";
+import  program from 'commander';
+program.version('5.1.0');
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+//validate JSON
 var validate = validator({
     required: true,
     type: 'object',
@@ -22,51 +21,62 @@ var validate = validator({
         },
         "tags": {
             required: true,
-            type: ["array"]
+            type: 'string'
         }
     }
 })
-rl.question(chalk.green("select one option : \ninsert\ndelete\nread\nsearch\nexit\n"), function(input) {
-    if (input == "read"){
-        getData()
-        setTimeout(() => rl.close(),3000)
-    }
-    else if (input == "delete"){
-         rl.question(chalk.red("Enter the id :\n"), function(id) {
-             var id=Number(id)
-            deleteItem(id)
-             rl.close();
-         });
-    }
-    else if (input == "search"){
-        rl.question(chalk.green("Enter tag : \n"), function(tag) {
-            searchItem(tag)
-            setTimeout(() => rl.close(),3000)
-        });
-    }
-    else if (input == "insert"){
-        rl.question(chalk.blue("Enter your data in json format :\n format:{\"link\" :\"\" ,\"description\" :\"\" ,\"tags\" :[\"tag1\",\"tag2\"]} "), function(input) {
-            try {
-                var jsonInput = JSON.parse(input)
-                if( validate(jsonInput)){
-                    insert(jsonInput)
-                    rl.close();
-                }
-                throw ''
-            }catch (e) {
-                console.log(chalk.red("invalid input"))
-                rl.close();
-            }
+//read data from database
+program
+    .command('read')
+    .description('Read all data from database')
+    .action(() => getData());
 
 
-        });
-    }
-    else {
-        rl.close();
-    }
-});
+//delete an item by id
+program
+    .command('delete <id>')
+    .description("Deletes a bookmarked information ")
+    .action((id) => {
+        var id=Number(id)
+        deleteItem(id)
+    });
 
-rl.on("close", function() {
-    console.log(chalk.green("\nProcess Is Ended !!!"));
-    process.exit(0);
-});
+//search items by tag
+program
+    .command('search <tag>')
+    .description("search a tag to find information")
+    .action((tag) => {
+        searchItem(tag)
+    });
+
+//insert an item to database
+program
+    .option('-l, --link <link>', 'link (for insert)')
+    .option('-d, --description <description>', 'description (for insert)')
+    .option('-t, --tags <tags>', 'tags (for insert)')
+    .command('insert')
+    .description("Insert by entering 3 options :link -l \" URL \" ,description -d \" sentence \"  ,tag -t (tag1-tag2-..)");
+
+
+program.parse(process.argv);
+
+//check for insertion
+if (program.link !== undefined){
+
+    var link = `${program.link}`;
+    var description = `${program.description}`;
+    var tags = `${program.tags}`
+    var jsonInput = `{\"link\":\"${link}\",\"description\":\"${description}\",\"tags\":\"${tags}\"}`
+    try {
+        var toJson = JSON.parse(jsonInput)
+        if( validate(toJson)){
+            insert(toJson)
+            console.log(toJson)
+        }else {
+            throw ''
+        }
+    }catch (e) {
+        console.log(chalk.red("not valid json"))
+    }
+
+}
