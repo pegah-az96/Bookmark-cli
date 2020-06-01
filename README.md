@@ -16,7 +16,7 @@
 >##### bookmark read
 
 **ذخیره لینک جدید**
->##### bookmark insert -l "url" -d "youu description" -t "your tags"
+>##### bookmark insert -l "url" -d "your description" -t "your tags"
 
 **حذف لینک مورد نظر**
 >##### bookmark delete id
