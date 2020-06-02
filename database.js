@@ -1,7 +1,7 @@
 import levelup from 'levelup'
 import leveldown from 'leveldown'
 
-var db = levelup(leveldown('./mydb6'),function (error) {
+const db = levelup(leveldown('./mydb6'), (error)=> {
     if (error){
         console.log(error)
     }
