@@ -4,9 +4,9 @@
   "description": "a cli tool for saving links",
   "type": "module",
   "main": "repo.js",
- "bin": {
-   "bookmark" : "client.js"
- },
+  "bin": {
+    "bookmark": "controller.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
