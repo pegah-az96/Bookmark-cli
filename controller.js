@@ -8,7 +8,7 @@ import  program from 'commander';
 import {getData, deleteItem, insert,searchItem} from "./services.js"
 
 
-//validate JSON
+//validate information for insertion
 const validate = validator({
     required: true,
     type: 'object',
