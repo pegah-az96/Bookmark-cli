@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 "use strict"
-//Packages
 import chalk from 'chalk'
+import {getData, deleteItem, insert,searchItem} from "./server.js"
 import validator from "is-my-json-valid";
 import  program from 'commander';
-//Modules
-import {getData, deleteItem, insert,searchItem} from "./services.js"
-
+program.version('5.1.0');
 
 //validate JSON
-const validate = validator({
+var validate = validator({
     required: true,
     type: 'object',
     properties: {
@@ -27,19 +25,20 @@ const validate = validator({
         }
     }
 })
-
 //read data from database
 program
     .command('read')
     .description('Read all data from database')
-    .action(getData);
+    .action(() => getData());
+
 
 //delete an item by id
 program
     .command('delete <id>')
     .description("Deletes a bookmarked information ")
     .action((id) => {
-        deleteItem(Number(id))
+        var id=Number(id)
+        deleteItem(id)
     });
 
 //search items by tag
@@ -57,23 +56,27 @@ program
     .option('-t, --tags <tags>', 'tags (for insert)')
     .command('insert')
     .description("Insert by entering 3 options :link -l \" URL \" ,description -d \" sentence \"  ,tag -t (tag1-tag2-..)");
+
+
 program.parse(process.argv);
 
 //check for insertion
-if (program.link){
-    const link = program.link;
-    const description = program.description;
-    const tags = program.tags;
-    const Input = {link:link,description:description,tags:tags};
+if (program.link !== undefined){
+
+    var link = `${program.link}`;
+    var description = `${program.description}`;
+    var tags = `${program.tags}`
+    var jsonInput = `{\"link\":\"${link}\",\"description\":\"${description}\",\"tags\":\"${tags}\"}`
     try {
-        if( validate(Input)){
-            insert(Input)
-            console.log(Input)
+        var toJson = JSON.parse(jsonInput)
+        if( validate(toJson)){
+            insert(toJson)
+            console.log(toJson)
         }else {
-            throw new Error("INVALID INPUT")
+            throw ''
         }
     }catch (e) {
-        console.log(chalk.red(e.message))
+        console.log(chalk.red("not valid json"))
     }
 
 }
